@@ -1,0 +1,33 @@
+@import "./styles/globals.css";
+/* ================================
+   Premium Gradient Animation
+================================ */
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% center;
+  }
+
+  50% {
+    background-position: 100% center;
+  }
+
+  100% {
+    background-position: 0% center;
+  }
+}
+
+.animate-gradient {
+  background-size: 300% 300%;
+  animation: gradientMove 8s ease infinite;
+}
+
+/* Glow */
+
+.hero-gradient-glow{
+  filter: drop-shadow(0 0 18px rgba(139,92,246,.30))
+          drop-shadow(0 0 40px rgba(59,130,246,.15));
+}
+html {
+  scroll-behavior: smooth;
+}
