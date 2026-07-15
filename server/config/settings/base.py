@@ -113,11 +113,12 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    
+    "https://ai-interview-pro-eta.vercel.app",
 ]
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
+    "https://ai-interview-pro-eta.vercel.app",
 ]
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS":
