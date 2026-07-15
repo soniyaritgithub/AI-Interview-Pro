@@ -1,7 +1,10 @@
 import io
+import json
 import logging
 
 from django.http import HttpResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -15,12 +18,22 @@ from apps.resume.models import Resume
 from apps.resume.serializers import ResumeSerializer
 from apps.resume.services.gemini_analyzer import GeminiAnalyzer, GeminiAnalysisError
 from apps.resume.services.gemini_service import GeminiService, GeminiServiceError
-from apps.resume.services.pdf_service import generate_pdf_report
+
+# ⚠️ pdf_service import hata diya - module missing hai
+# from apps.resume.services.pdf_service import generate_pdf_report
 
 logger = logging.getLogger(__name__)
 
 
-class ResumeUploadView(APIView):
+# ========== BASE VIEW WITH CSRF EXEMPT ==========
+@method_decorator(csrf_exempt, name='dispatch')
+class BaseCSRFExemptView(APIView):
+    """Base view with CSRF exemption for all API endpoints"""
+    pass
+
+
+# ========== RESUME UPLOAD ==========
+class ResumeUploadView(BaseCSRFExemptView):
     permission_classes = [AllowAny]
     parser_classes = [MultiPartParser, FormParser]
 
@@ -58,7 +71,8 @@ class ResumeUploadView(APIView):
             )
 
 
-class ResumeAnalyzeView(APIView):
+# ========== RESUME ANALYZE ==========
+class ResumeAnalyzeView(BaseCSRFExemptView):
     permission_classes = [AllowAny]
 
     def post(self, request, pk):
@@ -88,7 +102,8 @@ class ResumeAnalyzeView(APIView):
             )
 
 
-class ResumeHistoryView(APIView):
+# ========== RESUME HISTORY ==========
+class ResumeHistoryView(BaseCSRFExemptView):
     permission_classes = [AllowAny]
 
     def get(self, request):
@@ -99,7 +114,8 @@ class ResumeHistoryView(APIView):
         )
 
 
-class ResumeDetailView(APIView):
+# ========== RESUME DETAIL ==========
+class ResumeDetailView(BaseCSRFExemptView):
     permission_classes = [AllowAny]
 
     def get(self, request, resume_id):
@@ -130,7 +146,8 @@ class ResumeDetailView(APIView):
             )
 
 
-class ResumeReanalyzeView(APIView):
+# ========== RESUME REANALYZE ==========
+class ResumeReanalyzeView(BaseCSRFExemptView):
     permission_classes = [AllowAny]
 
     def post(self, request, resume_id):
@@ -151,7 +168,8 @@ class ResumeReanalyzeView(APIView):
             )
 
 
-class ResumeDownloadView(APIView):
+# ========== RESUME DOWNLOAD (pdf_service hata diya) ==========
+class ResumeDownloadView(BaseCSRFExemptView):
     permission_classes = [AllowAny]
 
     def get(self, request, resume_id):
@@ -162,10 +180,14 @@ class ResumeDownloadView(APIView):
                     {"success": False, "message": "No analysis found.", "data": None, "errors": {}},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            pdf_bytes = generate_pdf_report(resume)
-            response = HttpResponse(pdf_bytes, content_type="application/pdf")
-            response["Content-Disposition"] = f'attachment; filename="report_{resume_id}.pdf"'
+            
+            # ⚠️ Temporary: JSON response instead of PDF (pdf_service missing)
+            pdf_bytes = json.dumps(resume.analysis_result, indent=2).encode('utf-8')
+            
+            response = HttpResponse(pdf_bytes, content_type="application/json")
+            response["Content-Disposition"] = f'attachment; filename="report_{resume_id}.json"'
             return response
+            
         except Resume.DoesNotExist:
             return Response(
                 {"success": False, "message": "Not found.", "data": None, "errors": {}},
@@ -173,7 +195,8 @@ class ResumeDownloadView(APIView):
             )
 
 
-class ResumeDashboardView(APIView):
+# ========== RESUME DASHBOARD ==========
+class ResumeDashboardView(BaseCSRFExemptView):
     permission_classes = [AllowAny]
 
     def get(self, request):
@@ -193,7 +216,8 @@ class ResumeDashboardView(APIView):
         )
 
 
-class ResumeMatchView(APIView):
+# ========== RESUME MATCH ==========
+class ResumeMatchView(BaseCSRFExemptView):
     permission_classes = [AllowAny]
 
     def post(self, request):
