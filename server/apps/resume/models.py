@@ -52,7 +52,8 @@ class Resume(models.Model):
         ordering = ["-uploaded_at"]
 
     def __str__(self):
-        return f"{self.user.username} - {self.title}"
+        username = self.user.username if self.user else "Anonymous"
+        return f"{username} - {self.title}"
 
 
 class ResumeAnalysis(models.Model):

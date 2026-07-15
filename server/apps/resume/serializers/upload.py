@@ -28,20 +28,25 @@ class ResumeUploadSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-
         request = self.context["request"]
         user = getattr(request, "user", None)
-        if isinstance(user, AnonymousUser):
+        
+        # Agar user Anonymous hai toh use strict None kar dein
+        if isinstance(user, AnonymousUser) or not getattr(user, "is_authenticated", False):
             user = None
+            
         uploaded_file = validated_data["file"]
 
-        if user:
+        # ----------------- EXACT UPDATE HERE -----------------
+        # Agar user logged in hai, tabhi filter lagayein, nahi toh skip karein
+        if user is not None:
             existing_resume = Resume.objects.filter(
                 user=user,
                 original_filename=uploaded_file.name,
             ).first()
         else:
             existing_resume = None
+        # -----------------------------------------------------
 
         if existing_resume:
             raise serializers.ValidationError(
@@ -49,12 +54,12 @@ class ResumeUploadSerializer(serializers.ModelSerializer):
             )
 
         resume = Resume.objects.create(
-            user=user if getattr(user, "is_authenticated", False) else None,
+            user=user, # Ye ab bilkul safe hai (None ya actual user)
             title=validated_data["title"],
             file=uploaded_file,
             original_filename=uploaded_file.name,
             file_size=uploaded_file.size,
-)
+        )
 
         try:
             extracted_text = PDFExtractor.extract_text(
@@ -71,26 +76,7 @@ class ResumeUploadSerializer(serializers.ModelSerializer):
             if not created:
                 analysis.extracted_text = extracted_text
                 analysis.save(update_fields=["extracted_text"])
-            try:
-                ai_result = GeminiService().analyze_resume(
-                    extracted_text,
-                )
-
-            except Exception as exc:
-
-                print(exc)
-
-                ai_result = {
-                    "ats_score": 0,
-                    "overall_score": 0,
-                    "summary": "AI analysis unavailable.",
-                    "strengths": [],
-                    "weaknesses": [],
-                    "missing_skills": [],
-                    "suggestions": [],
-                }
             
-
             try:
                 ai_result = GeminiService().analyze_resume(
                     extracted_text,

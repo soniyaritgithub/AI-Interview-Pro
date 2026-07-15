@@ -1,7 +1,5 @@
 from django.db.models import Q
-
 from apps.resume.models import ResumeAnalysis
-
 
 class ResumeHistoryService:
     """
@@ -11,24 +9,24 @@ class ResumeHistoryService:
     - Search by resume title
     - Filter by status
     - Safe ordering
-    - Optimized queryset
+    - Optimized queryset (Bypassed authentication)
     """
 
     def get_queryset(
         self,
         *,
-        user,
+        user=None,        # User parameter ko optional banaya
         search=None,
         status=None,
         ordering="-updated_at",
     ):
+        # ----------------- EXACT UPDATE HERE -----------------
+        # User filter ko completely hata diya hai taaki global history fetch ho sake
         queryset = (
             ResumeAnalysis.objects
             .select_related("resume")
-            .filter(
-                resume__user=user,
-            )
         )
+        # -----------------------------------------------------
 
         # Search by Resume Title
         if search:
