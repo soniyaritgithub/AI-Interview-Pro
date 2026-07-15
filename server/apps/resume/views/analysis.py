@@ -1,18 +1,17 @@
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.resume.models import Resume, ResumeAnalysis
-
-# Sahi Serializer Imports
 from apps.resume.serializers import (
     ResumeAnalysisSerializer,
     ResumeHistorySerializer,
     ResumeDetailSerializer,
 )
-
 from apps.resume.services import (
     ResumeAnalysisService,
     ResumeDeleteService,
@@ -23,6 +22,7 @@ from apps.resume.services import (
     ResumeDetailService,
 )
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ResumeAnalysisAPIView(APIView):
     permission_classes = [AllowAny]
 
@@ -40,6 +40,7 @@ class ResumeAnalysisAPIView(APIView):
         serializer = ResumeAnalysisSerializer(analysis)
         return Response({"success": True, "message": "Resume analyzed successfully.", "data": serializer.data}, status=status.HTTP_200_OK)
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ResumeHistoryAPIView(generics.ListAPIView):
     permission_classes = [AllowAny]
     serializer_class = ResumeHistorySerializer
@@ -53,6 +54,7 @@ class ResumeHistoryAPIView(generics.ListAPIView):
             ordering=self.request.query_params.get("ordering", "-updated_at")
         )
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ResumeDetailAPIView(APIView):
     permission_classes = [AllowAny]
     def get(self, request, resume_id):
@@ -61,6 +63,7 @@ class ResumeDetailAPIView(APIView):
         serializer = ResumeDetailSerializer({"resume": result["resume"], "analysis": result["analysis"]})
         return Response({"success": True, "data": serializer.data}, status=status.HTTP_200_OK)
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ResumeDeleteAPIView(APIView):
     permission_classes = [AllowAny]
     def delete(self, request, resume_id):
@@ -70,6 +73,7 @@ class ResumeDeleteAPIView(APIView):
         ResumeDeleteService().delete(resume)
         return Response({"success": True, "message": "Deleted successfully."}, status=status.HTTP_200_OK)
 
+@method_decorator(csrf_exempt, name='dispatch')
 class DashboardStatisticsAPIView(APIView):
     permission_classes = [AllowAny]
     def get(self, request):
@@ -77,6 +81,7 @@ class DashboardStatisticsAPIView(APIView):
         statistics = service.get_statistics(user=None)
         return Response({"success": True, "data": statistics}, status=status.HTTP_200_OK)
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ResumeReanalyzeAPIView(APIView):
     permission_classes = [AllowAny]
     def post(self, request, resume_id):
@@ -86,6 +91,7 @@ class ResumeReanalyzeAPIView(APIView):
         analysis = ResumeReanalyzeService().reanalyze(resume)
         return Response({"success": True, "data": ResumeAnalysisSerializer(analysis).data}, status=status.HTTP_200_OK)
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ResumeDownloadAPIView(APIView):
     permission_classes = [AllowAny]
     def get(self, request, resume_id):

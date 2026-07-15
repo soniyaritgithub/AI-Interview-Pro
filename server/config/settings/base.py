@@ -116,6 +116,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://ai-interview-pro-eta.vercel.app",
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+# CSRF ke liye ye check kar lein
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "https://ai-interview-pro-eta.vercel.app",
