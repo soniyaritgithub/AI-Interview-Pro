@@ -1,6 +1,7 @@
 from .upload import ResumeUploadSerializer
 from .analysis import ResumeAnalysisSerializer
-from .history import ResumeHistorySerializer  # Ye nayi line add karni hai
+from .history import ResumeHistorySerializer
+from .detail import ResumeDetailSerializer  # Yeh line miss ho rahi thi
 from .job_match import (
     JobMatchRequestSerializer,
     JobMatchResponseSerializer,
@@ -9,7 +10,8 @@ from .job_match import (
 __all__ = [
     "ResumeUploadSerializer",
     "ResumeAnalysisSerializer",
-    "ResumeHistorySerializer", # Ye add karna hai
+    "ResumeHistorySerializer",
+    "ResumeDetailSerializer",
     "JobMatchRequestSerializer",
     "JobMatchResponseSerializer",
 ]
