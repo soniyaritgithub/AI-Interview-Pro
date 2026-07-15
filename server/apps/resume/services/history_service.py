@@ -15,34 +15,27 @@ class ResumeHistoryService:
     def get_queryset(
         self,
         *,
-        user=None,        # User parameter ko optional banaya
+        user=None,        # User parameter optional hai, ab ise filter mein use nahi karenge
         search=None,
         status=None,
         ordering="-updated_at",
     ):
-        # ----------------- EXACT UPDATE HERE -----------------
-        # User filter ko completely hata diya hai taaki global history fetch ho sake
-        queryset = (
-            ResumeAnalysis.objects
-            .select_related("resume")
-        )
-        # -----------------------------------------------------
+        # 1. Base Queryset (User filter hata diya gaya hai)
+        queryset = ResumeAnalysis.objects.select_related("resume")
 
-        # Search by Resume Title
+        # 2. Search by Resume Title
         if search:
             queryset = queryset.filter(
-                Q(
-                    resume__title__icontains=search,
-                )
+                Q(resume__title__icontains=search)
             )
 
-        # Filter by Resume Status
+        # 3. Filter by Resume Status
         if status:
             queryset = queryset.filter(
                 resume__status=status,
             )
 
-        # Allow only safe ordering fields
+        # 4. Safe ordering logic
         allowed_ordering = [
             "updated_at",
             "-updated_at",
