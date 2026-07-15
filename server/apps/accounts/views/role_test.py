@@ -23,3 +23,4 @@ class CandidateDashboardView(APIView):
                 "role": request.user.role,
             },
         )
+    

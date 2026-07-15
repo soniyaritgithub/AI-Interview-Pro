@@ -32,13 +32,16 @@ w-full
 grid
 
 grid-cols-2
-sm:grid-cols-2
+
 md:grid-cols-2
-lg:grid-cols-4
+
+xl:grid-cols-4
 
 gap-8
-sm:gap-10
-lg:gap-12
+
+lg:gap-10
+
+xl:gap-12
 " >
    {footerLinks.map(
   (section: FooterSection, index: number) => (
@@ -70,29 +73,34 @@ flex-col
 gap-5
 ">
     <h3
-  className="
-    text-sm
-    sm:text-base
+className="
+mb-4
 
-    font-semibold
+text-sm
 
-    uppercase
+font-semibold
 
-    tracking-[0.18em]
+uppercase
 
-    text-white
-  "
+tracking-[0.12em]
+
+text-white
+
+whitespace-nowrap
+"
 >
   {section.title}
 </h3>
 <ul
-  className="
-    flex
+ className="
+mt-2
 
-    flex-col
+flex
 
-    gap-3
-  "
+flex-col
+
+gap-4
+"
 >{section.links.map(
   (
     link: FooterSection["links"][number]
@@ -100,17 +108,22 @@ gap-5
     <li key={link.label}><a
   href={link.href}
   className="
-    text-sm
-    sm:text-[15px]
+block
 
-    text-slate-400
+text-sm
 
-    transition-all
-    duration-300
+leading-6
 
-    hover:text-violet-300
-    hover:translate-x-1
-  "
+text-slate-400
+
+transition-all
+
+duration-300
+
+hover:text-violet-300
+
+hover:translate-x-1
+"
 >
   {link.label}
 </a></li> ))} </ul>
