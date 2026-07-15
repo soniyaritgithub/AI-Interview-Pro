@@ -1,7 +1,7 @@
 import json
 import logging
 
-import google.generativeai as genai
+from google import genai
 
 from django.conf import settings
 
@@ -23,12 +23,8 @@ class GeminiService:
                 "GEMINI_API_KEY is missing."
             )
 
-        genai.configure(
+        self.client = genai.Client(
             api_key=settings.GEMINI_API_KEY
-        )
-
-        self.model = genai.GenerativeModel(
-            "gemini-2.5-flash"
         )
 
     def analyze_resume(
@@ -68,8 +64,9 @@ Resume:
 
         try:
 
-            response = self.model.generate_content(
-                prompt,
+            response = self.client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt,
             )
 
             content = response.text.strip()
@@ -139,8 +136,9 @@ Job Description:
 
         try:
 
-            response = self.model.generate_content(
-                prompt,
+            response = self.client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt,
             )
 
             content = response.text.strip()
