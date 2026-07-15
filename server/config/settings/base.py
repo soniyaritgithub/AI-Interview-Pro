@@ -1,6 +1,7 @@
 from datetime import timedelta
 from pathlib import Path
 import os
+import urllib.parse
 from dotenv import load_dotenv
 from decouple import config
 
@@ -14,10 +15,7 @@ DEBUG = os.getenv("DEBUG") == "True"
 
 ALLOWED_HOSTS = [
     host.strip()
-    for host in os.getenv(
-        "ALLOWED_HOSTS",
-        "",
-    ).split(",")
+    for host in os.getenv("ALLOWED_HOSTS", "").split(",")
     if host.strip()
 ]
 
@@ -45,16 +43,13 @@ LOCAL_APPS = [
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
-# ==========================================================
-# MIDDLEWARE - CSRF HATA DIYA
-# ==========================================================
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    # "django.middleware.csrf.CsrfViewMiddleware",  # 👈 HATA DIYA
+    # "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -82,22 +77,34 @@ TEMPLATES = [
 ]
 
 # ==========================================================
-# DATABASE - dj_database_url HATAKE
+# DATABASE - dj_database_url KE BINA
 # ==========================================================
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME", default=""),
-        "USER": config("DB_USER", default=""),
-        "PASSWORD": config("DB_PASSWORD", default=""),
-        "HOST": config("DB_HOST", default=""),
-        "PORT": config("DB_PORT", default="5432"),
-    }
-}
+DATABASE_URL = config("DATABASE_URL", default="")
 
-# ==========================================================
-# STATIC & MEDIA FILES
-# ==========================================================
+if DATABASE_URL:
+    parsed = urllib.parse.urlparse(DATABASE_URL)
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": parsed.path[1:],
+            "USER": parsed.username,
+            "PASSWORD": parsed.password,
+            "HOST": parsed.hostname,
+            "PORT": parsed.port or "5432",
+        }
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": config("DATABASE_ENGINE", default="django.db.backends.postgresql"),
+            "NAME": config("DB_NAME", default=""),
+            "USER": config("DB_USER", default=""),
+            "PASSWORD": config("DB_PASSWORD", default=""),
+            "HOST": config("DB_HOST", default=""),
+            "PORT": config("DB_PORT", default="5432"),
+        }
+    }
+
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
@@ -105,9 +112,6 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# ==========================================================
-# CORS & CSRF
-# ==========================================================
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://ai-interview-pro-eta.vercel.app",
@@ -119,9 +123,6 @@ CSRF_TRUSTED_ORIGINS = [
     "https://ai-interview-pro-eta.vercel.app",
 ]
 
-# ==========================================================
-# REST FRAMEWORK
-# ==========================================================
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_FILTER_BACKENDS": [
@@ -130,13 +131,10 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.AllowAny",
     ),
-    "DEFAULT_AUTHENTICATION_CLASSES": [],  # 👈 AUTH HATA DIYA
+    "DEFAULT_AUTHENTICATION_CLASSES": [],
     "EXCEPTION_HANDLER": "apps.core.exceptions.custom_exception_handler",
 }
 
-# ==========================================================
-# SPECTACULAR (Swagger Docs)
-# ==========================================================
 SPECTACULAR_SETTINGS = {
     "TITLE": "AI Interview Pro API",
     "DESCRIPTION": (
@@ -164,21 +162,12 @@ SPECTACULAR_SETTINGS = {
     },
 }
 
-# ==========================================================
-# WHITENOISE
-# ==========================================================
 STATICFILES_STORAGE = (
     "whitenoise.storage.CompressedManifestStaticFilesStorage"
 )
 
-# ==========================================================
-# AUTH
-# ==========================================================
 AUTH_USER_MODEL = "accounts.User"
 
-# ==========================================================
-# JWT
-# ==========================================================
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
@@ -192,14 +181,8 @@ SIMPLE_JWT = {
     ),
 }
 
-# ==========================================================
-# GEMINI
-# ==========================================================
 GEMINI_API_KEY = config("GEMINI_API_KEY", default="")
 
-# ==========================================================
-# Celery Configuration
-# ==========================================================
 CELERY_BROKER_URL = config(
     "CELERY_BROKER_URL",
     default="redis://127.0.0.1:6379/0",
