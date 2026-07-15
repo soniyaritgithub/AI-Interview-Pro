@@ -261,32 +261,6 @@ POST   /api/v1/resume/match/
 
 ---
 
-# Screenshots
-
-## Landing Page
-
-(Add Screenshot)
-
----
-
-## Dashboard
-
-(Add Screenshot)
-
----
-
-## Resume Upload
-
-(Add Screenshot)
-
----
-
-## ATS Analysis
-
-(Add Screenshot)
-
----
-
 # Future Improvements
 
 - Google OAuth Login
@@ -322,7 +296,7 @@ POST   /api/v1/resume/match/
 
 **Sunidhi Shinde**
 
-📧 Email: your-email@example.com
+📧 Email: sunidhishinde28@gmail.com
 
 💼 LinkedIn
 
