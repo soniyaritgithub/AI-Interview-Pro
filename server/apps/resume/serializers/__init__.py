@@ -1,17 +1,10 @@
-from .upload import ResumeUploadSerializer
-from .analysis import ResumeAnalysisSerializer
-from .history import ResumeHistorySerializer
-from .detail import ResumeDetailSerializer  # Yeh line miss ho rahi thi
-from .job_match import (
-    JobMatchRequestSerializer,
-    JobMatchResponseSerializer,
-)
+from apps.resume.serializers.upload import ResumeUploadSerializer
+from apps.resume.serializers.analysis import ResumeAnalysisSerializer
+from apps.resume.serializers.history import ResumeHistorySerializer
+from apps.resume.serializers.detail import ResumeDetailSerializer
+from apps.resume.serializers.job_match import JobMatchRequestSerializer, JobMatchResponseSerializer
 
 __all__ = [
-    "ResumeUploadSerializer",
-    "ResumeAnalysisSerializer",
-    "ResumeHistorySerializer",
-    "ResumeDetailSerializer",
-    "JobMatchRequestSerializer",
-    "JobMatchResponseSerializer",
+    "ResumeUploadSerializer", "ResumeAnalysisSerializer", "ResumeHistorySerializer",
+    "ResumeDetailSerializer", "JobMatchRequestSerializer", "JobMatchResponseSerializer"
 ]
