@@ -5,10 +5,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.resume.models import Resume, ResumeAnalysis
+
+# Sahi Serializer Imports
 from apps.resume.serializers import (
     ResumeAnalysisSerializer,
     ResumeHistorySerializer,
+    ResumeDetailSerializer,
 )
+
 from apps.resume.services import (
     ResumeAnalysisService,
     ResumeDeleteService,
@@ -18,7 +22,6 @@ from apps.resume.services import (
     ResumeReanalyzeService,
     ResumeDetailService,
 )
-from apps.resume.serializers.detail import ResumeDetailSerializer
 
 class ResumeAnalysisAPIView(APIView):
     permission_classes = [AllowAny]
@@ -53,7 +56,6 @@ class ResumeHistoryAPIView(generics.ListAPIView):
 class ResumeDetailAPIView(APIView):
     permission_classes = [AllowAny]
     def get(self, request, resume_id):
-        # user=None kiya
         service = ResumeDetailService(user=None, resume_id=resume_id)
         result = service.execute()
         serializer = ResumeDetailSerializer({"resume": result["resume"], "analysis": result["analysis"]})
@@ -62,7 +64,6 @@ class ResumeDetailAPIView(APIView):
 class ResumeDeleteAPIView(APIView):
     permission_classes = [AllowAny]
     def delete(self, request, resume_id):
-        # user filter hata diya
         resume = Resume.objects.filter(id=resume_id).first()
         if resume is None:
             return Response({"success": False, "message": "Resume not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -73,15 +74,12 @@ class DashboardStatisticsAPIView(APIView):
     permission_classes = [AllowAny]
     def get(self, request):
         service = ResumeDashboardService()
-        # user=None pass kiya
         statistics = service.get_statistics(user=None)
-        latest = statistics["latest_analysis"]
         return Response({"success": True, "data": statistics}, status=status.HTTP_200_OK)
 
 class ResumeReanalyzeAPIView(APIView):
     permission_classes = [AllowAny]
     def post(self, request, resume_id):
-        # user filter hata diya
         resume = Resume.objects.filter(id=resume_id).first()
         if resume is None:
             return Response({"success": False, "message": "Resume not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -91,7 +89,6 @@ class ResumeReanalyzeAPIView(APIView):
 class ResumeDownloadAPIView(APIView):
     permission_classes = [AllowAny]
     def get(self, request, resume_id):
-        # user filter hata diya
         analysis = ResumeAnalysis.objects.select_related("resume").filter(resume__id=resume_id).first()
         if analysis is None:
             return Response({"success": False, "message": "Not found."}, status=status.HTTP_404_NOT_FOUND)
