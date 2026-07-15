@@ -95,9 +95,7 @@ lg:pr-4
 xl:pr-6
 2xl:pr-8
 
-lg:-translate-x-12
-xl:-translate-x-16
-2xl:-translate-x-20
+
 "
 >
         <div className="-mt-6 lg:-mt-5">
