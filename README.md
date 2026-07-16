@@ -20,7 +20,15 @@ The platform automatically analyzes uploaded resumes, calculates an ATS score, i
 Powered by **Google Gemini AI**, the application provides detailed resume insights within seconds.
 
 ---
+## 🔗 Project Links
 
+| Resource | Link |
+|----------|------|
+| 💻 **GitHub Repository** | https://lnkd.in/dFJGPYvp |
+| 🌐 **Live Demo** | https://lnkd.in/du9CWHfr |
+| 📄 **Resume Upload Module** | https://lnkd.in/dnjtZ__e |
+| ⚙️ **Backend API Documentation** | https://lnkd.in/d68uugjE |
+---
 # ✨ Features
 
 ## 📄 Resume Management
